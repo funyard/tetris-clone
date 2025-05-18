@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/assets">
+        <file alias="Ikona">icon.ico</file>
+        <file alias="Pixeboy-Font">Pixeboy-Font.ttf</file>
+    </qresource>
+</RCC>
