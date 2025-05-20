@@ -48,7 +48,6 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
     gameOverText = new QGraphicsTextItem("GAME OVER");
     gameOverText->setDefaultTextColor(Qt::white);
     gameOverText->setFont(QFont(PixeboyFont, 34, QFont::Bold));
-    qDebug() << list;
     gameOverText->setPos(65, 180);
     gameOverText->setZValue(1);    // Prekrije vse
     gameOverText->setVisible(false);
@@ -175,6 +174,35 @@ bool Game::jeValidnaPozicija(Kocka *block, QPointF offset)
     return true;
 }
 
+bool Game::jeValidnaRotacija(Kocka *kocka, QPointF offset)
+{
+    // Najprej zarotiramo in pogledamo ce pozicija sploh validna
+    kocka->zarotiraj();
+
+    // Podobno kot pri preverjanju ce je pozicija validna
+    for (auto item : kocka->childItems())
+    {
+        QPointF pos = kocka->pos() + item->pos() + offset;
+        int x = qRound(pos.x() / Game::stranicaKocke);
+        int y = qRound(pos.y() / Game::stranicaKocke);
+
+        if (x <= 0 || x >= Game::stKockSirina ||  (plosca[x][y]))
+        {
+            kocka->zarotiraj();
+            kocka->zarotiraj();
+            kocka->zarotiraj();
+            return false;
+        }
+
+    }
+
+    // Nato vrnemo kocko v originalno pozicijo
+    kocka->zarotiraj();
+    kocka->zarotiraj();
+    kocka->zarotiraj();
+    return true;
+}
+
 void Game::postaviKocko()
 {
     for (QGraphicsItem *item : trenutnaKocka->childItems()) {
@@ -289,9 +317,43 @@ void Game::keyPressEvent(QKeyEvent *event)
             trenutnaKocka->moveBy(0, Game::stranicaKocke);
         break;
     case Qt::Key_Up:
-        if (jeValidnaPozicija(trenutnaKocka))
-            trenutnaKocka->zarotiraj();
-        break;
+        // Preverili bomo tudi, če smo ob steni/ob kocki, da se bomo vseeno lahko zarotirali
+        if (trenutnaKocka->tip != Kocka::I)
+        {
+            if (jeValidnaRotacija(trenutnaKocka, {0,0}))
+                trenutnaKocka->zarotiraj();
+            // Objekt na desni strani kocke
+            else if (jeValidnaRotacija(trenutnaKocka, {-Game::stranicaKocke, 0}))
+            {
+                trenutnaKocka->moveBy(-Game::stranicaKocke, 0);
+                trenutnaKocka->zarotiraj();
+            }
+            // Objekt na levi strani kocke
+            else if (jeValidnaRotacija(trenutnaKocka, {2*Game::stranicaKocke, 0}))
+            {
+                trenutnaKocka->moveBy(Game::stranicaKocke, 0);
+                trenutnaKocka->zarotiraj();
+            }
+            break;
+        }
+        else // Saj je moznost pri rotaciji kocke I, da se sirina poveca za 2
+        {
+            if (jeValidnaRotacija(trenutnaKocka, {0,0}))
+                trenutnaKocka->zarotiraj();
+            // Ob desni
+            else if (jeValidnaRotacija(trenutnaKocka, {-2*Game::stranicaKocke, 0}))
+            {
+                trenutnaKocka->moveBy(-2*Game::stranicaKocke, 0);
+                trenutnaKocka->zarotiraj();
+            }
+            // Ob levi
+            else if (jeValidnaRotacija(trenutnaKocka, {2*Game::stranicaKocke, 0}))
+            {
+                trenutnaKocka->moveBy(2*Game::stranicaKocke, 0);
+                trenutnaKocka->zarotiraj();
+            }
+            break;
+        }
     }
 
 }

@@ -57,8 +57,9 @@ private:
 
     // Custom font
     int fontId = QFontDatabase::addApplicationFont(":/assets/Pixeboy-Font");
-    QStringList list = QFontDatabase::applicationFontFamilies(fontId);
-    QString PixeboyFont = list[0];
+    QStringList listFontov = QFontDatabase::applicationFontFamilies(fontId);
+    QString PixeboyFont = listFontov[0];
+    bool jeValidnaRotacija(Kocka *kocka, QPointF offset);
 };
 
 #endif // GAME_H
