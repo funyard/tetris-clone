@@ -27,7 +27,6 @@ private:
 
     static const int stKockSirina = 10;
     static const int stKockVisina = 20;
-    static constexpr double stranicaKocke = 20.0; // const ne dela ker double(?)
 
     // Za shranjevanje že postavljenih kock
     Ploscica *plosca[stKockSirina][stKockVisina]; // Izhodišče plošče je v zgornjem levem kotu

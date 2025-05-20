@@ -7,6 +7,7 @@
 class Ploscica : public QGraphicsRectItem {
 public:
     Ploscica(QColor color);
+    static constexpr double stranicaPloscice = 20.0; // const ne dela ker double(?)
 };
 
 #endif // PLOSCICA_H

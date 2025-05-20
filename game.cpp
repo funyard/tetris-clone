@@ -12,10 +12,10 @@ Game::Game(QWidget *parent) : QGraphicsView(parent)
 
     // Nariši grid za preglednost
     for (int x = 0; x <= Game::stKockSirina; ++x) {
-        scene->addLine(x * Game::stranicaKocke, 0, x * Game::stranicaKocke, 400, QPen(QColor(224,224,225, 28)));
+        scene->addLine(x * Ploscica::stranicaPloscice, 0, x * Ploscica::stranicaPloscice, 400, QPen(QColor(224,224,225, 28)));
     }
     for (int y = 0; y <= Game::stKockVisina; ++y) {
-        scene->addLine(0, y * Game::stranicaKocke, 200, y * Game::stranicaKocke, QPen(QColor(224,224,225, 28)));
+        scene->addLine(0, y * Ploscica::stranicaPloscice, 200, y * Ploscica::stranicaPloscice, QPen(QColor(224,224,225, 28)));
     }
 
     // Nastavitve za okno
@@ -160,8 +160,8 @@ bool Game::jeValidnaPozicija(Kocka *block, QPointF offset)
     // Loopamo čez vse kocke
     for (QGraphicsItem *item : block->childItems()) {
         QPointF pos = block->pos() + item->pos() + offset;
-        int x = qRound(pos.x() / Game::stranicaKocke);
-        int y = qRound(pos.y() / Game::stranicaKocke);
+        int x = qRound(pos.x() / Ploscica::stranicaPloscice);
+        int y = qRound(pos.y() / Ploscica::stranicaPloscice);
 
         // Preverimo NE VALIDNE pozicije
         // če x < 0 ali x >= Game::stKockSirina smo na robovih
@@ -183,8 +183,8 @@ bool Game::jeValidnaRotacija(Kocka *kocka, QPointF offset)
     for (auto item : kocka->childItems())
     {
         QPointF pos = kocka->pos() + item->pos() + offset;
-        int x = qRound(pos.x() / Game::stranicaKocke);
-        int y = qRound(pos.y() / Game::stranicaKocke);
+        int x = qRound(pos.x() / Ploscica::stranicaPloscice);
+        int y = qRound(pos.y() / Ploscica::stranicaPloscice);
 
         if (x <= 0 || x >= Game::stKockSirina ||  (plosca[x][y]))
         {
@@ -209,8 +209,8 @@ void Game::postaviKocko()
         Ploscica *tile = dynamic_cast<Ploscica*>(item);
         if (tile) {
             QPointF pos = trenutnaKocka->pos() + tile->pos();
-            int x = qRound(pos.x() / Game::stranicaKocke);
-            int y = qRound(pos.y() / Game::stranicaKocke);
+            int x = qRound(pos.x() / Ploscica::stranicaPloscice);
+            int y = qRound(pos.y() / Ploscica::stranicaPloscice);
             plosca[x][y] = tile;
             QPointF scenePos = tile->mapToScene(QPointF(0, 0));
             tile->setParentItem(nullptr);
@@ -258,7 +258,7 @@ void Game::izbrisiLinije()
                 for (int x = 0; x < Game::stKockSirina; ++x) {
                     plosca[x][row + 1] = plosca[x][row];
                     if (plosca[x][row + 1]) {
-                        plosca[x][row + 1]->moveBy(0, Game::stranicaKocke);
+                        plosca[x][row + 1]->moveBy(0, Ploscica::stranicaPloscice);
                     }
                 }
             }
@@ -291,8 +291,8 @@ void Game::spustiKocko()
     if (!trenutnaKocka) return;
 
     // Preverimo, če je to da kocko prestavimo za eno enoto navzdol validna poteza
-    if (jeValidnaPozicija(trenutnaKocka, {0, Game::stranicaKocke})) {
-        trenutnaKocka->moveBy(0, Game::stranicaKocke);
+    if (jeValidnaPozicija(trenutnaKocka, {0, Ploscica::stranicaPloscice})) {
+        trenutnaKocka->moveBy(0, Ploscica::stranicaPloscice);
     } else {
         // Drugače kocko postavimo
         postaviKocko();
@@ -305,16 +305,16 @@ void Game::keyPressEvent(QKeyEvent *event)
 
     switch (event->key()) {
     case Qt::Key_Left:
-        if (jeValidnaPozicija(trenutnaKocka, {-Game::stranicaKocke, 0}))
-            trenutnaKocka->moveBy(-Game::stranicaKocke, 0);
+        if (jeValidnaPozicija(trenutnaKocka, {-Ploscica::stranicaPloscice, 0}))
+            trenutnaKocka->moveBy(-Ploscica::stranicaPloscice, 0);
         break;
     case Qt::Key_Right:
-        if (jeValidnaPozicija(trenutnaKocka, {Game::stranicaKocke, 0}))
-            trenutnaKocka->moveBy(Game::stranicaKocke, 0);
+        if (jeValidnaPozicija(trenutnaKocka, {Ploscica::stranicaPloscice, 0}))
+            trenutnaKocka->moveBy(Ploscica::stranicaPloscice, 0);
         break;
     case Qt::Key_Down:
-        if (jeValidnaPozicija(trenutnaKocka, {0, Game::stranicaKocke}))
-            trenutnaKocka->moveBy(0, Game::stranicaKocke);
+        if (jeValidnaPozicija(trenutnaKocka, {0, Ploscica::stranicaPloscice}))
+            trenutnaKocka->moveBy(0, Ploscica::stranicaPloscice);
         break;
     case Qt::Key_Up:
         // Preverili bomo tudi, če smo ob steni/ob kocki, da se bomo vseeno lahko zarotirali
@@ -323,15 +323,15 @@ void Game::keyPressEvent(QKeyEvent *event)
             if (jeValidnaRotacija(trenutnaKocka, {0,0}))
                 trenutnaKocka->zarotiraj();
             // Objekt na desni strani kocke
-            else if (jeValidnaRotacija(trenutnaKocka, {-Game::stranicaKocke, 0}))
+            else if (jeValidnaRotacija(trenutnaKocka, {-Ploscica::stranicaPloscice, 0}))
             {
-                trenutnaKocka->moveBy(-Game::stranicaKocke, 0);
+                trenutnaKocka->moveBy(-Ploscica::stranicaPloscice, 0);
                 trenutnaKocka->zarotiraj();
             }
             // Objekt na levi strani kocke
-            else if (jeValidnaRotacija(trenutnaKocka, {2*Game::stranicaKocke, 0}))
+            else if (jeValidnaRotacija(trenutnaKocka, {2*Ploscica::stranicaPloscice, 0}))
             {
-                trenutnaKocka->moveBy(Game::stranicaKocke, 0);
+                trenutnaKocka->moveBy(Ploscica::stranicaPloscice, 0);
                 trenutnaKocka->zarotiraj();
             }
             break;
@@ -341,15 +341,15 @@ void Game::keyPressEvent(QKeyEvent *event)
             if (jeValidnaRotacija(trenutnaKocka, {0,0}))
                 trenutnaKocka->zarotiraj();
             // Ob desni
-            else if (jeValidnaRotacija(trenutnaKocka, {-2*Game::stranicaKocke, 0}))
+            else if (jeValidnaRotacija(trenutnaKocka, {-2*Ploscica::stranicaPloscice, 0}))
             {
-                trenutnaKocka->moveBy(-2*Game::stranicaKocke, 0);
+                trenutnaKocka->moveBy(-2*Ploscica::stranicaPloscice, 0);
                 trenutnaKocka->zarotiraj();
             }
             // Ob levi
-            else if (jeValidnaRotacija(trenutnaKocka, {2*Game::stranicaKocke, 0}))
+            else if (jeValidnaRotacija(trenutnaKocka, {2*Ploscica::stranicaPloscice, 0}))
             {
-                trenutnaKocka->moveBy(2*Game::stranicaKocke, 0);
+                trenutnaKocka->moveBy(2*Ploscica::stranicaPloscice, 0);
                 trenutnaKocka->zarotiraj();
             }
             break;
